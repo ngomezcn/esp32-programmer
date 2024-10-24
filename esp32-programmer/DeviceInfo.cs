@@ -13,7 +13,9 @@ class DeviceInfo
   public string TimeStamp { get; set; }
 
   public string ChipVersion { get; set; }
-  public string MacBluetooth { get; set; }
+  public string RawMacBluetooth { get; set; }
+
+  public string StandardizedMacBluetooth { get; set; }
   public string MacBluetoothHash { get; set; }
   public string ChipID { get; set; }
   public int CpuFreqMHz { get; set; }

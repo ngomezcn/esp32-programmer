@@ -17,6 +17,11 @@ public class PowerShellExecutor
         "fail",
     };
 
+  private readonly List<string> whitelistKeywords = new List<string>
+    {
+        "BLEExceptions",
+    };
+
   public PowerShellExecutor() { }
 
   public bool ExecuteCommand(string command, string path)
@@ -83,13 +88,24 @@ public class PowerShellExecutor
 
   private bool ContainsErrorKeyword(string message)
   {
+    // Verificar si la cadena está en la whitelist
+    foreach (var whitelistWord in whitelistKeywords)
+    {
+      if (message.IndexOf(whitelistWord, StringComparison.OrdinalIgnoreCase) >= 0)
+      {
+        return false; // No es un error si está en la whitelist
+      }
+    }
+
+    // Verificar si contiene una palabra clave de error
     foreach (var keyword in errorKeywords)
     {
       if (message.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
       {
-        return true;
+        return true; // Es un error si no está en la whitelist
       }
     }
+
     return false;
   }
 }

@@ -23,6 +23,19 @@ public class DeviceManager
     _qrGenerator = qrGenerator;
   }
 
+  private string StandardizeMacAddress(string macAddress)
+  {
+    string[] parts = macAddress.Split(':');
+    for (int i = 0; i < parts.Length; i++)
+    {
+      if (parts[i].Length == 1)
+      {
+        parts[i] = "0" + parts[i];  // Añadir un '0' al frente si el fragmento tiene solo un carácter
+      }
+    }
+    return string.Join(":", parts);  // Reunir las partes de nuevo en una cadena
+  }
+
   private DeviceInfo ParseDeviceInfo(string data)
   {
     DeviceInfo deviceInfo = new DeviceInfo();
@@ -43,7 +56,7 @@ public class DeviceManager
             deviceInfo.ChipVersion = value;
             break;
           case "macBluetooth":
-            deviceInfo.MacBluetooth = value;
+            deviceInfo.RawMacBluetooth = value;
             break;
           case "chipID":
             deviceInfo.ChipID = value;
@@ -61,13 +74,15 @@ public class DeviceManager
       }
     }
 
+    deviceInfo.StandardizedMacBluetooth = StandardizeMacAddress(deviceInfo.RawMacBluetooth).ToUpper();
 
-    deviceInfo.MacBluetoothHash = CryptoHelper.ComputeHash(deviceInfo.MacBluetooth);
-    deviceInfo.AccessKey = GenerateAccessKey(deviceInfo.MacBluetoothHash);
-    deviceInfo.InternalDeviceName = $"SG-{GenerateDeviceId(deviceInfo.MacBluetoothHash)}-XY";
+    deviceInfo.MacBluetoothHash = CryptoHelper.Encode(deviceInfo.RawMacBluetooth);
+    deviceInfo.AccessKey = GenerateAccessKey(deviceInfo.RawMacBluetooth);
+    deviceInfo.InternalDeviceName = $"SG-{GenerateDeviceId(deviceInfo.RawMacBluetooth)}-XY";
     deviceInfo.TimeStamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-    deviceInfo.ConnectionString = $"{deviceInfo.MacBluetooth},{deviceInfo.InternalDeviceName},{deviceInfo.AccessKey},000";
-    deviceInfo.ConnectionStringEncrypted = CryptoHelper.Encrypt(deviceInfo.ConnectionString);
+
+    deviceInfo.ConnectionString = $"{deviceInfo.StandardizedMacBluetooth},{deviceInfo.InternalDeviceName},{deviceInfo.AccessKey},000";
+    deviceInfo.ConnectionStringEncrypted = CryptoHelper.Encode(deviceInfo.ConnectionString);
 
     return deviceInfo;
   }
@@ -129,7 +144,7 @@ public class DeviceManager
     {
       deviceInfo.TimeStamp,
       deviceInfo.InternalDeviceName,
-      deviceInfo.MacBluetooth,
+      deviceInfo.StandardizedMacBluetooth,
       deviceInfo.AccessKey,
       deviceInfo.ConnectionString,
       deviceInfo.ChipID,
@@ -137,6 +152,7 @@ public class DeviceManager
       deviceInfo.CpuFreqMHz,
       deviceInfo.FlashSizeKB,
       deviceInfo.FreeRAMKB,
+      deviceInfo.RawMacBluetooth,
       deviceInfo.ConnectionStringEncrypted,
       deviceInfo.MacBluetoothHash
     };

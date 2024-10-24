@@ -98,7 +98,7 @@ public static class ConsoleHelper
     ConsoleHelper.PrintInfo($"Cadena de Conexión (Encriptada): {device.ConnectionStringEncrypted}");
     ConsoleHelper.PrintInfo($"Marca de Tiempo: {device.TimeStamp}");
     ConsoleHelper.PrintInfo($"Versión del Chip: {device.ChipVersion}");
-    ConsoleHelper.PrintInfo($"MAC Bluetooth: {device.MacBluetooth}");
+    ConsoleHelper.PrintInfo($"MAC Bluetooth: {device.StandardizedMacBluetooth}");
     ConsoleHelper.PrintInfo($"Hash MAC Bluetooth: {device.MacBluetoothHash}");
     ConsoleHelper.PrintInfo($"ID del Chip: {device.ChipID}");
     ConsoleHelper.PrintInfo($"Frecuencia de CPU (MHz): {device.CpuFreqMHz}");
