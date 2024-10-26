@@ -81,7 +81,7 @@ public class DeviceManager
     deviceInfo.InternalDeviceName = $"SG-{GenerateDeviceId(deviceInfo.RawMacBluetooth)}-XY";
     deviceInfo.TimeStamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-    deviceInfo.ConnectionString = $"{deviceInfo.StandardizedMacBluetooth},{deviceInfo.InternalDeviceName},{deviceInfo.AccessKey},000";
+    deviceInfo.ConnectionString = $"BLE,{deviceInfo.StandardizedMacBluetooth},{deviceInfo.InternalDeviceName},{deviceInfo.AccessKey},000";
     deviceInfo.ConnectionStringEncrypted = CryptoHelper.Encode(deviceInfo.ConnectionString);
 
     return deviceInfo;
